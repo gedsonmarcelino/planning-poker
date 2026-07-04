@@ -137,7 +137,7 @@ function SetupScreen({ onCreateRoom, onJoinRoom, onStartLocal }) {
             type="text"
             value={name}
             onChange={(event) => setName(event.target.value)}
-            placeholder="Fulano"
+            placeholder="Ex: Fulano"
             required
           />
         </label>
