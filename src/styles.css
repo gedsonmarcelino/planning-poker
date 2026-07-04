@@ -259,6 +259,17 @@ h2 {
   box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
 }
 
+.topic-field input[aria-invalid="true"] {
+  border-color: #e11d48;
+  box-shadow: 0 0 0 4px rgba(225, 29, 72, 0.12);
+}
+
+.field-error {
+  color: #be123c;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
 .topic-row {
   display: grid;
 }

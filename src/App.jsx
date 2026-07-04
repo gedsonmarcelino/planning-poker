@@ -107,20 +107,29 @@ function clearParticipantVotes(participants) {
 function SetupScreen({ onCreateRoom, onJoinRoom, onStartLocal }) {
   const queryRoomCode = new URLSearchParams(window.location.search).get('room') ?? '';
   const [name, setName] = useState('');
+  const [nameError, setNameError] = useState('');
   const [roomCode, setRoomCode] = useState(queryRoomCode.toUpperCase());
+
+  function validateName() {
+    if (name.trim()) {
+      setNameError('');
+      return true;
+    }
+
+    setNameError('Informe seu nome para continuar.');
+    return false;
+  }
 
   function submitCreate(event) {
     event.preventDefault();
-    const participantName = name.trim();
-    if (!participantName) return;
-    onCreateRoom(participantName);
+    if (!validateName()) return;
+    onCreateRoom(name.trim());
   }
 
   function submitJoin(event) {
     event.preventDefault();
-    const participantName = name.trim();
-    if (!participantName || !roomCode.trim()) return;
-    onJoinRoom(participantName, roomCode.trim().toUpperCase());
+    if (!validateName() || !roomCode.trim()) return;
+    onJoinRoom(name.trim(), roomCode.trim().toUpperCase());
   }
 
   return (
@@ -136,10 +145,22 @@ function SetupScreen({ onCreateRoom, onJoinRoom, onStartLocal }) {
           <input
             type="text"
             value={name}
-            onChange={(event) => setName(event.target.value)}
+            onChange={(event) => {
+              setName(event.target.value);
+              if (event.target.value.trim()) {
+                setNameError('');
+              }
+            }}
             placeholder="Ex: Fulano"
+            aria-invalid={Boolean(nameError)}
+            aria-describedby={nameError ? 'name-error' : undefined}
             required
           />
+          {nameError && (
+            <small className="field-error" id="name-error">
+              {nameError}
+            </small>
+          )}
         </label>
 
         <div className="mode-grid">
