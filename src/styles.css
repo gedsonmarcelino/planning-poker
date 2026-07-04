@@ -71,10 +71,57 @@ textarea:disabled {
   background: #ffffff;
 }
 
+.setup-choice {
+  color: inherit;
+  text-align: left;
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease,
+    transform 150ms ease;
+}
+
+.setup-choice:hover,
+.setup-choice:focus-visible {
+  border-color: #2563eb;
+  box-shadow: 0 16px 30px rgba(37, 99, 235, 0.14);
+  transform: translateY(-2px);
+}
+
 .setup-box p {
   margin: 8px 0 0;
   color: #64748b;
   font-weight: 700;
+}
+
+.setup-form {
+  display: grid;
+  gap: 18px;
+}
+
+.setup-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.choice-command {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-height: 44px;
+  width: fit-content;
+  padding: 0 16px;
+  border-radius: 8px;
+  background: #2563eb;
+  color: #ffffff;
+  font-weight: 900;
+}
+
+.secondary-command {
+  border: 1px solid #cfd8e6;
+  background: #ffffff;
+  color: #1f2a44;
 }
 
 .text-button {
@@ -623,13 +670,15 @@ h2 {
 
   .topbar-actions,
   .room-actions,
+  .setup-actions,
   .round-actions .icon-button,
   .icon-button {
     width: 100%;
   }
 
   .topbar-actions,
-  .room-actions {
+  .room-actions,
+  .setup-actions {
     align-items: stretch;
     flex-direction: column;
   }

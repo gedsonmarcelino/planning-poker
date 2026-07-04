@@ -24,10 +24,11 @@ Aplicacao publicada:
 ### Criar uma sala
 
 1. Acesse a aplicacao.
-2. Informe seu nome.
-3. Clique em `Criar`.
-4. Compartilhe o codigo da sala ou use `Copiar link`.
-5. Mantenha a aba do host aberta durante a sessao.
+2. Clique em `Criar sessao`.
+3. Informe seu nome.
+4. Clique em `Criar sala`.
+5. Compartilhe o codigo da sala ou use `Copiar link`.
+6. Mantenha a aba do host aberta durante a sessao.
 
 O host controla:
 
@@ -40,10 +41,11 @@ O host controla:
 ### Entrar em uma sala
 
 1. Acesse o link compartilhado pelo host ou abra a aplicacao.
-2. Informe seu nome.
-3. Digite o codigo da sala.
-4. Clique em `Entrar`.
-5. Escolha sua carta quando a rodada estiver pronta.
+2. Clique em `Entrar como convidado`.
+3. Informe seu nome.
+4. Digite o codigo da sala.
+5. Clique em `Entrar`.
+6. Escolha sua carta quando a rodada estiver pronta.
 
 ### Usar no mesmo navegador
 

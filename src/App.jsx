@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import {
+  ArrowLeft,
   BarChart3,
   Check,
   Copy,
@@ -106,9 +107,11 @@ function clearParticipantVotes(participants) {
 
 function SetupScreen({ onCreateRoom, onJoinRoom, onStartLocal }) {
   const queryRoomCode = new URLSearchParams(window.location.search).get('room') ?? '';
+  const [setupView, setSetupView] = useState(queryRoomCode ? 'join' : 'choice');
   const [name, setName] = useState('');
   const [nameError, setNameError] = useState('');
   const [roomCode, setRoomCode] = useState(queryRoomCode.toUpperCase());
+  const [roomCodeError, setRoomCodeError] = useState('');
 
   function validateName() {
     if (name.trim()) {
@@ -120,6 +123,16 @@ function SetupScreen({ onCreateRoom, onJoinRoom, onStartLocal }) {
     return false;
   }
 
+  function validateRoomCode() {
+    if (roomCode.trim()) {
+      setRoomCodeError('');
+      return true;
+    }
+
+    setRoomCodeError('Informe o codigo da sala para continuar.');
+    return false;
+  }
+
   function submitCreate(event) {
     event.preventDefault();
     if (!validateName()) return;
@@ -128,74 +141,159 @@ function SetupScreen({ onCreateRoom, onJoinRoom, onStartLocal }) {
 
   function submitJoin(event) {
     event.preventDefault();
-    if (!validateName() || !roomCode.trim()) return;
+    const hasName = validateName();
+    const hasRoomCode = validateRoomCode();
+    if (!hasName || !hasRoomCode) return;
     onJoinRoom(name.trim(), roomCode.trim().toUpperCase());
   }
+
+  function resetSetupForm(nextView) {
+    setNameError('');
+    setRoomCodeError('');
+    setSetupView(nextView);
+  }
+
+  const nameField = (
+    <label className="topic-field">
+      <span>Seu nome</span>
+      <input
+        type="text"
+        value={name}
+        onChange={(event) => {
+          setName(event.target.value);
+          if (event.target.value.trim()) {
+            setNameError('');
+          }
+        }}
+        placeholder="Ex: Fulano"
+        aria-invalid={Boolean(nameError)}
+        aria-describedby={nameError ? 'name-error' : undefined}
+        required
+      />
+      {nameError && (
+        <small className="field-error" id="name-error">
+          {nameError}
+        </small>
+      )}
+    </label>
+  );
 
   return (
     <main className="setup-shell">
       <section className="setup-panel" aria-label="Entrar no planning poker">
         <div>
           <p className="eyebrow">Planning Poker</p>
-          <h1>Sala de estimativas</h1>
+          <h1>
+            {setupView === 'create'
+              ? 'Criar sessao'
+              : setupView === 'join'
+                ? 'Entrar como convidado'
+                : 'Sala de estimativas'}
+          </h1>
         </div>
 
-        <label className="topic-field">
-          <span>Seu nome</span>
-          <input
-            type="text"
-            value={name}
-            onChange={(event) => {
-              setName(event.target.value);
-              if (event.target.value.trim()) {
-                setNameError('');
-              }
-            }}
-            placeholder="Ex: Fulano"
-            aria-invalid={Boolean(nameError)}
-            aria-describedby={nameError ? 'name-error' : undefined}
-            required
-          />
-          {nameError && (
-            <small className="field-error" id="name-error">
-              {nameError}
-            </small>
-          )}
-        </label>
+        {setupView === 'choice' && (
+          <>
+            <div className="mode-grid">
+              <button
+                className="setup-box setup-choice"
+                type="button"
+                onClick={() => resetSetupForm('create')}
+              >
+                <div>
+                  <h2>Criar sessao</h2>
+                  <p>Abra uma sala e compartilhe o codigo com o time.</p>
+                </div>
+                <span className="choice-command">
+                  <Plus size={18} />
+                  Criar
+                </span>
+              </button>
 
-        <div className="mode-grid">
-          <form className="setup-box" onSubmit={submitCreate}>
-            <div>
-              <h2>Criar sala</h2>
-              <p>Host da rodada</p>
+              <button
+                className="setup-box setup-choice"
+                type="button"
+                onClick={() => resetSetupForm('join')}
+              >
+                <div>
+                  <h2>Entrar como convidado</h2>
+                  <p>Use o codigo enviado pelo host da rodada.</p>
+                </div>
+                <span className="choice-command secondary-command">
+                  <LogIn size={18} />
+                  Entrar
+                </span>
+              </button>
             </div>
-            <button className="icon-button primary" type="submit">
-              <Plus size={18} />
-              <span>Criar</span>
-            </button>
-          </form>
 
-          <form className="setup-box" onSubmit={submitJoin}>
+            <button className="text-button" type="button" onClick={onStartLocal}>
+              Usar no mesmo navegador
+            </button>
+          </>
+        )}
+
+        {setupView === 'create' && (
+          <form className="setup-form" onSubmit={submitCreate} noValidate>
+            {nameField}
+            <div className="setup-actions">
+              <button
+                className="icon-button secondary"
+                type="button"
+                onClick={() => resetSetupForm('choice')}
+              >
+                <ArrowLeft size={18} />
+                <span>Voltar</span>
+              </button>
+              <button className="icon-button primary" type="submit">
+                <Plus size={18} />
+                <span>Criar sala</span>
+              </button>
+            </div>
+          </form>
+        )}
+
+        {setupView === 'join' && (
+          <form className="setup-form" onSubmit={submitJoin} noValidate>
+            {nameField}
             <label className="topic-field">
               <span>Codigo</span>
               <input
                 type="text"
                 value={roomCode}
-                onChange={(event) => setRoomCode(event.target.value.toUpperCase())}
+                onChange={(event) => {
+                  setRoomCode(event.target.value.toUpperCase());
+                  if (event.target.value.trim()) {
+                    setRoomCodeError('');
+                  }
+                }}
                 placeholder="ABC123"
                 maxLength={12}
+                aria-invalid={Boolean(roomCodeError)}
+                aria-describedby={roomCodeError ? 'room-code-error' : undefined}
+                required
               />
+              {roomCodeError && (
+                <small className="field-error" id="room-code-error">
+                  {roomCodeError}
+                </small>
+              )}
             </label>
-            <button className="icon-button secondary" type="submit">
-              <LogIn size={18} />
-              <span>Entrar</span>
-            </button>
+            <div className="setup-actions">
+              <button
+                className="icon-button secondary"
+                type="button"
+                onClick={() => resetSetupForm('choice')}
+              >
+                <ArrowLeft size={18} />
+                <span>Voltar</span>
+              </button>
+              <button className="icon-button primary" type="submit">
+                <LogIn size={18} />
+                <span>Entrar</span>
+              </button>
+            </div>
           </form>
-        </div>
-
-        <button className="text-button" type="button" onClick={onStartLocal}>
-          Usar no mesmo navegador
-        </button>
+        )}
       </section>
     </main>
   );
