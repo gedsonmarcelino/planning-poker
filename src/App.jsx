@@ -111,13 +111,16 @@ function SetupScreen({ onCreateRoom, onJoinRoom, onStartLocal }) {
 
   function submitCreate(event) {
     event.preventDefault();
-    onCreateRoom(name.trim() || 'Host');
+    const participantName = name.trim();
+    if (!participantName) return;
+    onCreateRoom(participantName);
   }
 
   function submitJoin(event) {
     event.preventDefault();
-    if (!roomCode.trim()) return;
-    onJoinRoom(name.trim() || 'Participante', roomCode.trim().toUpperCase());
+    const participantName = name.trim();
+    if (!participantName || !roomCode.trim()) return;
+    onJoinRoom(participantName, roomCode.trim().toUpperCase());
   }
 
   return (
@@ -134,7 +137,8 @@ function SetupScreen({ onCreateRoom, onJoinRoom, onStartLocal }) {
             type="text"
             value={name}
             onChange={(event) => setName(event.target.value)}
-            placeholder="Ex.: Gedson"
+            placeholder="Fulano"
+            required
           />
         </label>
 
